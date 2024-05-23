@@ -1,0 +1,29 @@
+version: '3.4'
+
+networks:
+    myAppNetwork:        
+
+services:
+    SqlServerDb:
+        container_name: SqlServerContainer
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        ports:
+            - 8002:1433
+        environment:
+            - ACCEPT_EULA=Y
+            - MSSQL_SA_PASSWORD=myStong_Password123# 
+        networks:
+            - myAppNetwork
+
+    api:
+        container_name: api
+        image: ${DOCKER_REGISTRY-}api:latest
+        ports:
+            - 8001:80 
+        build:
+          context: .
+          dockerfile: API/Dockerfile
+        depends_on:
+            - SqlServerDb
+        networks:
+            - myAppNetwork
